@@ -9,13 +9,17 @@ Gem::Specification.new do |spec|
     reading, and deleting emails represented in the file.
   EOF
   spec.authors = ['Jon Seay']
+  spec.homepage = "https://github.com/jonnypolite/imbox"
+  spec.license = 'MIT'
+
   spec.files = Dir.glob('lib/**/*.rb')
   spec.executables << 'imbox'
-  spec.license = 'MIT'
+
   spec.add_dependency 'mbox', '~> 0.1.0'
   spec.add_dependency 'tty-spinner', '~> 0.9.3'
+  spec.add_dependency 'curses', '~> 1.4.4'
+
   spec.add_development_dependency 'rspec', '~> 3.11'
   # TODO
-  # spec.homepage = "gitlab repo I guess"
   # spec.email = "make an alias first"
 end

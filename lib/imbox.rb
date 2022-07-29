@@ -1,2 +1,4 @@
 require 'mbox'
-require 'imbox/imbox'
+require 'curses'
+
+require 'imbox/app'

@@ -2,4 +2,4 @@
 
 require 'imbox'
 
-Imbox.call(ARGV[0])
+Imbox::App.call(ARGV[0])

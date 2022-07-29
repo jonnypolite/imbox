@@ -1,4 +1,4 @@
-require 'tty-spinner'
+require 'imbox/screen'
 
 module Imbox
   class App
@@ -6,13 +6,41 @@ module Imbox
       new(mbox_path)
     end
 
-    def initialize(mbox_path)
-      spinner = TTY::Spinner.new("[:spinner] Loading mail ...", success_mark: "✔")
-      spinner.auto_spin
-      @mail_box = Mbox.open(mbox_path)
-      spinner.success("done.")
+    INPUT_CONFIG = {
+      113 => 'quit'
+    }
 
-      puts "There are apparently #{@mail_box.length} emails in that .mbox file."
+    def initialize(mbox_path)
+      @mail_box = Mbox.open(mbox_path)
+
+      run
+    end
+
+    private
+
+    attr_reader :screen
+
+    def run
+      @screen = Screen.new('Imbox')
+
+      loop do
+        # update content
+
+        input = screen.await_input
+
+        continue = self.send(INPUT_CONFIG[input.ord] || "noop")
+
+        break unless continue
+      end
+    end
+
+    def quit
+      screen.close
+      false
+    end
+
+    def noop
+      true
     end
   end
 end

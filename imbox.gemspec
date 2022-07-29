@@ -15,9 +15,9 @@ Gem::Specification.new do |spec|
   spec.files = Dir.glob('lib/**/*.rb')
   spec.executables << 'imbox'
 
-  spec.add_dependency 'mbox', '~> 0.1.0'
-  spec.add_dependency 'tty-spinner', '~> 0.9.3'
   spec.add_dependency 'curses', '~> 1.4.4'
+  spec.add_dependency 'mbox', '~> 0.1.0'
+  spec.add_dependency 'tty-screen', '~> 0.8.1'
 
   spec.add_development_dependency 'rspec', '~> 3.11'
   # TODO

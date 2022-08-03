@@ -1,4 +1,4 @@
-require 'imbox/screen'
+require 'imbox/display'
 
 module Imbox
   class App
@@ -7,7 +7,8 @@ module Imbox
     end
 
     INPUT_CONFIG = {
-      113 => 'quit'
+      113 => 'quit',
+      Curses::KEY_RESIZE => 'on_terminal_resize'
     }
 
     def initialize(mbox_path)
@@ -18,25 +19,32 @@ module Imbox
 
     private
 
-    attr_reader :screen
+    attr_reader :display
 
     def run
-      @screen = Screen.new('Imbox')
+      begin
+        @display = Display.new(:title => 'Imbox')
 
-      loop do
-        # update content
+        loop do
+          # update content
 
-        input = screen.await_input
+          input = display.await_input
 
-        continue = self.send(INPUT_CONFIG[input.ord] || "noop")
+          continue = self.send(INPUT_CONFIG[input.ord] || "noop")
 
-        break unless continue
+          break unless continue
+        end
+      ensure
+        quit
       end
     end
 
+    def on_terminal_resize
+      display.redraw
+    end
+
     def quit
-      screen.close
-      false
+      display.close
     end
 
     def noop

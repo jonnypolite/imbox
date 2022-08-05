@@ -17,7 +17,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'curses', '~> 1.4.4'
   spec.add_dependency 'mbox', '~> 0.1.0'
-  spec.add_dependency 'tty-screen', '~> 0.8.1'
 
   spec.add_development_dependency 'rspec', '~> 3.11'
   # TODO

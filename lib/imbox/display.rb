@@ -9,10 +9,9 @@ module Imbox
       Curses.curs_set(0)
       Curses.noecho
 
-      # Setup all the initial UI stuff
       @main = Curses::Window.new(Curses.lines, Curses.cols, 0, 0)
-      draw_border(main)
-      draw_title(main, config[:title]) if config[:title]
+      redraw
+
       main.refresh
     end
 
@@ -28,8 +27,9 @@ module Imbox
     def redraw
       main.resize(Curses.lines, Curses.cols)
       main.clear
-      draw_border(main)
+      main.box
       draw_title(main, config[:title]) if config[:title]
+      draw_header(main)
       true
     end
 
@@ -37,39 +37,40 @@ module Imbox
 
     attr_reader :config, :main
 
+    def draw_header(window)
+      header = window.subwin(5, window.maxx-2, 1, 1)
+      bottom_border(header)
+      window.setpos(2, 2)
+      window.addstr("I figure stuff will go in here like mail count, and a control reference.")
+    end
+
     def draw_title(window, title_text)
       window.setpos(0, 5)
       window.addstr("[ #{title_text} ]")
     end
 
-    def draw_border(window)
-      window.box
+    def bottom_border(window)
+      # logger = Logger.new("development.log")
+
+      window.setpos(window.maxy-1, 0)
+      (0..window.maxx).each do
+        window.addstr("─")
+      end
+    end
+
+    # def border(window)
     #   # Draw the top
-    #   width.times do |i|
-    #     Curses.setpos(0, i)
     #     Curses.addstr('╔') if i === 0
     #     Curses.addstr('═') if i > 0 && i < width-1
     #     Curses.addstr('╗') if i === width-1
-    #   end
 
     #   # Draw the middle vertical lines
-    #   y = 1
-    #   (height-2).times do
-    #     Curses.setpos(y, 0)
     #     Curses.addstr('║')
-    #     Curses.setpos(y, width-1)
-    #     Curses.addstr('║')
-
-    #     y += 1
-    #   end
 
     #   # Draw the bottom
-    #   width.times do |i|
-    #     Curses.setpos(height, i)
     #     Curses.addstr('╚') if i === 0
     #     Curses.addstr('═') if i > 0 && i < width-1
     #     Curses.addstr('╝') if i === width-1
-    #   end
-    end
+    # end
   end
 end

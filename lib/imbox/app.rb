@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'imbox/display'
 
 module Imbox
@@ -22,21 +24,19 @@ module Imbox
     attr_reader :display
 
     def run
-      begin
-        @display = Display.new(:title => 'Imbox')
+      @display = Display.new(title: 'Imbox')
 
-        loop do
-          # update content
+      loop do
+        # update content
 
-          input = display.await_input
+        input = display.await_input
 
-          continue = self.send(INPUT_CONFIG[input.ord] || "noop")
+        continue = send(INPUT_CONFIG[input.ord] || 'noop')
 
-          break unless continue
-        end
-      ensure
-        quit
+        break unless continue
       end
+    ensure
+      quit
     end
 
     def on_terminal_resize

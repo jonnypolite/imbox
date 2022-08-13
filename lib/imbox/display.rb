@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'curses'
 
 module Imbox
@@ -20,7 +22,7 @@ module Imbox
     end
 
     def close
-      Curses.close_screen
+      Curses.close_screen unless Curses.closed?
       false
     end
 
@@ -38,10 +40,10 @@ module Imbox
     attr_reader :config, :main
 
     def draw_header(window)
-      header = window.subwin(5, window.maxx-2, 1, 1)
+      header = window.subwin(5, window.maxx - 2, 1, 1)
       bottom_border(header)
       window.setpos(2, 2)
-      window.addstr("I figure stuff will go in here like mail count, and a control reference.")
+      window.addstr('I figure stuff will go in here like mail count, and a control reference.')
     end
 
     def draw_title(window, title_text)
@@ -52,9 +54,9 @@ module Imbox
     def bottom_border(window)
       # logger = Logger.new("development.log")
 
-      window.setpos(window.maxy-1, 0)
+      window.setpos(window.maxy - 1, 0)
       (0..window.maxx).each do
-        window.addstr("─")
+        window.addstr('─')
       end
     end
 

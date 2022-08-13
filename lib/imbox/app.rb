@@ -2,14 +2,14 @@ require 'imbox/display'
 
 module Imbox
   class App
+    INPUT_CONFIG = {
+      113 => 'exit_loop',
+      Curses::KEY_RESIZE => 'on_terminal_resize'
+    }.freeze
+
     def self.call(mbox_path)
       new(mbox_path)
     end
-
-    INPUT_CONFIG = {
-      113 => 'quit',
-      Curses::KEY_RESIZE => 'on_terminal_resize'
-    }
 
     def initialize(mbox_path)
       @mail_box = Mbox.open(mbox_path)
@@ -41,6 +41,10 @@ module Imbox
 
     def on_terminal_resize
       display.redraw
+    end
+
+    def exit_loop
+      false
     end
 
     def quit

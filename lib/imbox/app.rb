@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'imbox/display'
+require 'imbox/mail'
 
 module Imbox
   class App

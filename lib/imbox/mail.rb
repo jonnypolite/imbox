@@ -1,42 +1,42 @@
 # frozen_string_literal: true
 
-require 'mbox'
+require 'rmail'
+require 'mail'
+require 'imbox/mail_summary'
 
 module Imbox
   class Mail
     def initialize(mbox_path)
       @mail_box = []
+      mbox = File.open(mbox_path)
 
-      # TODO: This never finished in irb LOL
-      # Also though, it doesn't seem to be parsing the emails correctly
-      # Since it's just a god damn text file I might have to split it myself and feed
-      # the text into some other mail gem and see if it can read them properly.
-      Mbox.open(mbox_path).each do |email|
-        @mail_box << email
+      RMail::Mailbox.parse_mbox(mbox) do |raw_email|
+        parsed_email = ::Mail.read_from_string(raw_email)
+        parsed_email.date = fix_date(parsed_email)
+        @mail_box << parsed_email
       end
 
-      # Mbox doesn't really cut it. Can't parse the emails properly.
-      # RMail seems to be able to, but it's cumbersome. The Message Objects that result are
-      # a pain in the ass. If it's a multipart message (all the chats), then the body is always an
-      # array of Message objects. Sometimes elements on that Array are ALSO arrays of Message objects!
-      # Somewhere nested in that damn array is a plain text message that still needs HTML parsing to display
-      # well.
+      mbox.close
+    end
 
-      # Some code to remember
-      # email_file = File.open("/Users/jseay/Downloads/mm-mail-small.mbox")
-      # inbox = RMail::Mailbox.parse_mbox(email_file)
-      # email_one = Mail.read_from_string(inbox[0])
+    def summary_list(start_range = nil, end_range = nil)
+      mail_box[start_range..end_range].map.with_index(start_range) do |email, index|
+        MailSummary.new(index, email)
+      end
+    end
+
+    def read
       # Then I need to check if it's multipart or not
       # Then I need some say to find all the plain/text parts
       # If there are none, then I need to do basic HTML parsing :fun:
     end
 
-    def all_subjects
-
-    end
-
     private
 
     attr_reader :mail_box
+
+    def fix_date(email)
+      email.date.nil? ? Time.parse(email.header['received'].first.value) : email.date
+    end
   end
 end

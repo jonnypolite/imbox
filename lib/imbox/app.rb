@@ -15,20 +15,21 @@ module Imbox
     end
 
     def initialize(mbox_path)
-      @mail_box = Mbox.open(mbox_path)
+      @mail = Mail.new(mbox_path)
 
       run
     end
 
     private
 
-    attr_reader :display
+    attr_reader :display, :mail
 
     def run
       @display = Display.new(title: 'Imbox')
 
       loop do
-        # update content
+        summary = mail.summary_list.map(&:to_s).join("\n")
+        display.set_content(summary)
 
         input = display.await_input
 

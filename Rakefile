@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 begin
   require 'rspec/core/rake_task'
 
@@ -5,5 +7,5 @@ begin
 
   task :default => :test
 rescue LoadError
-  puts "No rspec available"
+  puts 'No rspec available'
 end

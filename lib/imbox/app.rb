@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-require 'imbox/display'
+require 'imbox/view/display'
 require 'imbox/mail'
+require 'logger'
 
 module Imbox
   class App
     INPUT_CONFIG = {
-      113 => 'exit_loop',
+      106 => 'move_down', # j
+      107 => 'move_up',   # k
+      113 => 'exit_loop', # q
       Curses::KEY_RESIZE => 'on_terminal_resize'
     }.freeze
 
@@ -16,6 +19,7 @@ module Imbox
 
     def initialize(mbox_path)
       @mail = Mail.new(mbox_path)
+      @logger = Logger.new('development.log')
 
       run
     end
@@ -25,20 +29,27 @@ module Imbox
     attr_reader :display, :mail
 
     def run
-      @display = Display.new(title: 'Imbox')
+      @display = View::Display.new(title: 'Imbox')
+      summary = mail.summary_list
+      display.content(summary, menu: true)
 
       loop do
-        summary = mail.summary_list.map(&:to_s).join("\n")
-        display.set_content(summary)
-
         input = display.await_input
-
         continue = send(INPUT_CONFIG[input.ord] || 'noop')
-
         break unless continue
+
+        display.refresh
       end
     ensure
       quit
+    end
+
+    def move_up
+      display.menu_up
+    end
+
+    def move_down
+      display.menu_down
     end
 
     def on_terminal_resize

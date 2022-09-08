@@ -3,10 +3,12 @@
 require 'rmail'
 require 'mail'
 require 'imbox/mail_summary'
+require 'logger'
 
 module Imbox
   class Mail
     def initialize(mbox_path)
+      @logger = Logger.new('development.log')
       @mail_box = []
       mbox = File.open(mbox_path)
 
@@ -36,6 +38,7 @@ module Imbox
     attr_reader :mail_box
 
     def fix_date(email)
+      @logger.debug(email.header['received'].first.value) if email.date.nil?
       email.date.nil? ? Time.parse(email.header['received'].first.value) : email.date
     end
   end

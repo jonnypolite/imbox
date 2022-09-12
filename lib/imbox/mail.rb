@@ -38,8 +38,8 @@ module Imbox
     attr_reader :mail_box
 
     def fix_date(email)
-      @logger.debug(email.header['received'].first.value) if email.date.nil?
-      email.date.nil? ? Time.parse(email.header['received'].first.value) : email.date
+      date = email.header['received'].first.value.split(';').last.strip if email.date.nil?
+      email.date.nil? ? Time.parse(date) : email.date
     end
   end
 end

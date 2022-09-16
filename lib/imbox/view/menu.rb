@@ -22,7 +22,6 @@ module Imbox
         y = 0
         window.clear
 
-        @logger.debug("[start: #{range_start}] [end: #{range_end}]")
         content[range_start..range_end].each.with_index(range_start) do |option, index|
           window.setpos(y, 0)
           window.standout if selection == index

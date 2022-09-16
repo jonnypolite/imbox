@@ -49,7 +49,7 @@ module Imbox
         main_window.refresh
       end
 
-      def content(content, menu: false)
+      def show_content(content, menu: false)
         if menu
           add_menu_content(content)
         else
@@ -99,8 +99,6 @@ module Imbox
         else
           content_window.resize(height, width)
         end
-
-        content_window.setscrreg(0, height)
       end
 
       def draw_title(window, title_text)

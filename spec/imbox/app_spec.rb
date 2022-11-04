@@ -12,6 +12,7 @@ describe Imbox::App do
     before do
       allow(Imbox::View::Display).to receive(:new) { display_instance }
       allow(display_instance).to receive(:await_input) { 'q' }
+      allow(display_instance).to receive(:confirm).and_return(true)
 
       allow(Imbox::Mail).to receive(:new) { mail_instance }
       allow(mail_instance).to receive(:summary_list) { summary }
@@ -21,6 +22,8 @@ describe Imbox::App do
       expect(mail_instance).to receive(:summary_list)
       expect(display_instance).to receive(:show_content).with(summary, menu: true)
       expect(display_instance).to receive(:await_input)
+      expect(display_instance).to receive(:confirm).with("Are you sure you'd like to quit?")
+      expect(display_instance).to receive(:redraw)
       expect(display_instance).to receive(:close)
       expect(display_instance).not_to receive(:refresh)
       subject

@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'curses', '~> 1.4.4'
   spec.add_dependency 'mail', '~> 2.7.1'
   spec.add_dependency 'rmail', '~> 1.1.4'
+  spec.add_dependency 'strings', '~> 0.2.1'
 
   spec.add_development_dependency 'net-smtp', '~> 0.3.1'
   spec.add_development_dependency 'rspec', '~> 3.11'

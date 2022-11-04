@@ -57,7 +57,12 @@ module Imbox
     end
 
     def exit_loop
-      false
+      confirm = display.confirm("Are you sure you'd like to quit?")
+      display.redraw
+
+      # Confirm returns true on OK, false on CANCEL
+      # but false is the thing that will break the input loop
+      !confirm
     end
 
     def quit

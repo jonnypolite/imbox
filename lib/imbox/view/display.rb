@@ -2,6 +2,7 @@
 
 require 'curses'
 require 'imbox/view/menu'
+require 'imbox/view/confirm'
 require 'logger'
 
 module Imbox
@@ -32,6 +33,11 @@ module Imbox
       def close
         Curses.close_screen unless Curses.closed?
         false
+      end
+
+      def confirm(message = nil)
+        @confirm_dialog = Confirm.new(main_window)
+        confirm_dialog.display(message)
       end
 
       def redraw
@@ -71,7 +77,7 @@ module Imbox
 
       private
 
-      attr_reader :config, :header_window, :main_window, :content_window, :mail_menu
+      attr_reader :config, :confirm_dialog, :header_window, :main_window, :content_window, :mail_menu
 
       def draw_header(window)
         width = window.maxx - 2

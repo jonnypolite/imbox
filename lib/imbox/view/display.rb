@@ -55,15 +55,23 @@ module Imbox
         main_window.refresh
       end
 
-      def show_content(content, menu: false)
-        if menu
-          add_menu_content(content)
-        else
-          add_basic_content(content)
-        end
+      def show_menu_content(content)
+        @mail_menu ||= Menu.new(content, content_window)
+        mail_menu.display
 
         content_window.refresh
       end
+
+      # TODO
+      # def show_email_content
+        # y = 0
+        # content_window.setpos(y, 0)
+        # content.split(CONTENT_SPLIT_REGEX) do |line|
+        #   content_window.addstr(line)
+        #   y += 1
+        #   content_window.setpos(y, 0)
+        # end
+      # end
 
       def menu_up
         mail_menu.move_up
@@ -117,21 +125,6 @@ module Imbox
         (0..window.maxx).each do
           window.addstr('─')
         end
-      end
-
-      def add_basic_content(content)
-        y = 0
-        content_window.setpos(y, 0)
-        content.split(CONTENT_SPLIT_REGEX) do |line|
-          content_window.addstr(line)
-          y += 1
-          content_window.setpos(y, 0)
-        end
-      end
-
-      def add_menu_content(content)
-        @mail_menu ||= Menu.new(content, content_window)
-        mail_menu.display
       end
 
       def reset_main_window

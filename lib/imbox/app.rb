@@ -31,7 +31,7 @@ module Imbox
     def run
       @display = View::Display.new(title: 'Imbox')
       summary = mail.summary_list
-      display.show_content(summary, menu: true)
+      display.show_menu_content(summary)
 
       loop do
         input = display.await_input

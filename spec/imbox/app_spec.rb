@@ -20,7 +20,7 @@ describe Imbox::App do
 
     it 'runs through the loop and breaks on q' do
       expect(mail_instance).to receive(:summary_list)
-      expect(display_instance).to receive(:show_content).with(summary, menu: true)
+      expect(display_instance).to receive(:show_menu_content).with(summary)
       expect(display_instance).to receive(:await_input)
       expect(display_instance).to receive(:confirm).with("Are you sure you'd like to quit?")
       expect(display_instance).to receive(:redraw)

@@ -8,4 +8,5 @@
   - [ ] Resize handling doesn't work when the confirm is up
   - [x] Look for TODOs
   - [x] Specs
+- [ ] Open an email
 

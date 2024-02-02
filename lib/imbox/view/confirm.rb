@@ -12,6 +12,7 @@ module Imbox
       INPUT_CONFIG = {
         9 => 'toggle_selection', # tab
         10 => 'make_selection' # enter
+        # Curses::KEY_RESIZE => 'on_terminal_resize' Maybe a nice to have?
       }.freeze
 
       def initialize(parent_window)
@@ -112,7 +113,7 @@ module Imbox
       end
 
       def make_selection
-        false
+        false # Just breaking the loop inside display
       end
 
       def noop

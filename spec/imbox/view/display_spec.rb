@@ -143,39 +143,39 @@ describe Imbox::View::Display do
     end
   end
 
-  describe '.show_content' do
+  describe '.show_menu_content' do
     let(:content) { 'blah blah blah' }
 
-    context 'when a menu is desired' do
-      let(:menu) { true }
+    it 'adds menu content' do
+      expect(Imbox::View::Menu).to receive(:new).with(content, subwindow)
+      expect(mail_menu).to receive(:display)
+      expect(subwindow).to receive(:refresh)
 
-      it 'adds menu content' do
-        expect(Imbox::View::Menu).to receive(:new).with(content, subwindow)
-        expect(mail_menu).to receive(:display)
-        expect(subwindow).to receive(:refresh)
-
-        subject.show_content(content, menu:)
-      end
-    end
-
-    context 'when no menu is desired' do
-      let(:menu) { false }
-
-      it 'adds basic content' do
-        expect(subwindow).to receive(:setpos).with(0, 0)
-        expect(subwindow).to receive(:addstr).with(content)
-        expect(subwindow).to receive(:setpos).with(1, 0)
-        expect(subwindow).to receive(:refresh)
-
-        subject.show_content(content, menu:)
-      end
+      subject.show_menu_content(content)
     end
   end
+
+  # describe '.show_content' do
+  #   let(:content) { 'blah blah blah' }
+
+  #   context 'when no menu is desired' do
+  #     let(:menu) { false }
+
+  #     it 'adds basic content' do
+  #       expect(subwindow).to receive(:setpos).with(0, 0)
+  #       expect(subwindow).to receive(:addstr).with(content)
+  #       expect(subwindow).to receive(:setpos).with(1, 0)
+  #       expect(subwindow).to receive(:refresh)
+
+  #       subject.show_content(content, menu:)
+  #     end
+  #   end
+  # end
 
   describe '.menu_up' do
     before do
       expect(subwindow).to receive(:refresh)
-      subject.show_content('whatever', menu: true)
+      subject.show_menu_content('whatever')
     end
 
     it 'tells mail_menu to move up' do
@@ -188,7 +188,7 @@ describe Imbox::View::Display do
   describe '.menu_down' do
     before do
       expect(subwindow).to receive(:refresh)
-      subject.show_content('whatever', menu: true)
+      subject.show_menu_content('whatever')
     end
 
     it 'tells mail_menu to move down' do

@@ -8,9 +8,15 @@ require 'logger'
 module Imbox
   module View
     class Display
-      CONTENT_SPLIT_REGEX = /\r?\n/
       HEADER_HEIGHT = 5
 
+      # TODO: I think what I want Display to be is a wrapper/manager for a collection of Curses
+      # windows. They would be placed next to each other in a cohesive way and registered here.
+      # They would be initialized and positioned here sort of like Vue components. I guess there would
+      # still have to be a main_window for them to sit on. Could there be a way for them to each manage
+      # their own keyboard input bindings? I would rather define them with an associated class
+      # then have everything in app.rb. I THINK the only way to do this is to have each subwindow
+      # await input, will have to test.
       def initialize(config = {})
         @config = config
 
@@ -23,7 +29,7 @@ module Imbox
 
         main_window.refresh
 
-        @logger = Logger.new('development.log')
+        @log = Logger.new('development.log')
       end
 
       def await_input
@@ -55,24 +61,46 @@ module Imbox
         main_window.refresh
       end
 
-      def show_content(content, menu: false)
-        if menu
-          add_menu_content(content)
-        else
-          add_basic_content(content)
-        end
+      # This receives a list of MailSummary objects
+      def show_menu_content(content)
+        @mail_menu ||= Menu.new(content, content_window)
+        mail_id = mail_menu.display
 
         content_window.refresh
+
+        mail_id
+      end
+
+      # This receives a MailDisplay
+      def show_email_content(email)
+        content_window.clear
+
+        # Scroll stuff?
+        # content_window.setscrreg(0, 10)
+
+        content_window.setpos(0, 0)
+        content_window.addstr(email.body)
+        # content_window.scrollok(true)
       end
 
       def menu_up
         mail_menu.move_up
-        true
       end
 
       def menu_down
         mail_menu.move_down
-        true
+      end
+
+      def debug
+        @log.debug(content_window.cury)
+      end
+
+      def scroll_email_up
+        content_window.scrl(1)
+      end
+
+      def scroll_email_down
+        content_window.scrl(-1)
       end
 
       private
@@ -117,21 +145,6 @@ module Imbox
         (0..window.maxx).each do
           window.addstr('─')
         end
-      end
-
-      def add_basic_content(content)
-        y = 0
-        content_window.setpos(y, 0)
-        content.split(CONTENT_SPLIT_REGEX) do |line|
-          content_window.addstr(line)
-          y += 1
-          content_window.setpos(y, 0)
-        end
-      end
-
-      def add_menu_content(content)
-        @mail_menu ||= Menu.new(content, content_window)
-        mail_menu.display
       end
 
       def reset_main_window

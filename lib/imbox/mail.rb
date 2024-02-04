@@ -3,6 +3,7 @@
 require 'rmail'
 require 'mail'
 require 'imbox/mail_summary'
+require 'imbox/mail_display'
 require 'logger'
 
 module Imbox
@@ -27,10 +28,13 @@ module Imbox
       end
     end
 
-    def read
-      # Then I need to check if it's multipart or not
-      # Then I need some say to find all the plain/text parts
+    def open(id)
+      # check if it's multipart or not
+        # This might be as simple as looking for Content-Type: multipart
+      # need some way to find all the plain/text parts
+        # Each boundary marker should have a content-type
       # If there are none, then I need to do basic HTML parsing :fun:
+        # I kinda remember there being a library for this
     end
 
     private

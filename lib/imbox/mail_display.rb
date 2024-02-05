@@ -6,6 +6,7 @@ module Imbox
       @email = email
     end
 
+    # This doesn't need to be in to_s necessarily
     def to_s
       "email content!"
     end

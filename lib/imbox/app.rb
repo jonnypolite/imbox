@@ -10,6 +10,7 @@ module Imbox
       106 => 'move_down', # j
       107 => 'move_up',   # k
       113 => 'exit_loop', # q
+      10 => 'open_email', # return
       Curses::KEY_RESIZE => 'on_terminal_resize'
     }.freeze
 
@@ -19,7 +20,8 @@ module Imbox
 
     def initialize(mbox_path)
       @mail = Mail.new(mbox_path)
-      @logger = Logger.new('development.log')
+      @selected_email_id = nil
+      @log = Logger.new('development.log')
 
       run
     end
@@ -31,7 +33,7 @@ module Imbox
     def run
       @display = View::Display.new(title: 'Imbox')
       summary = mail.summary_list
-      display.show_menu_content(summary)
+      @selected_email_id = display.show_menu_content(summary)
 
       loop do
         input = display.await_input
@@ -44,12 +46,16 @@ module Imbox
       quit
     end
 
+    def open_email
+      display.show_email_content(mail.get_email(@selected_email_id))
+    end
+
     def move_up
-      display.menu_up
+      @selected_email_id = display.menu_up
     end
 
     def move_down
-      display.menu_down
+      @selected_email_id = display.menu_down
     end
 
     def on_terminal_resize

@@ -23,7 +23,7 @@ module Imbox
 
         main_window.refresh
 
-        @logger = Logger.new('development.log')
+        @log = Logger.new('development.log')
       end
 
       def await_input
@@ -57,13 +57,15 @@ module Imbox
 
       def show_menu_content(content)
         @mail_menu ||= Menu.new(content, content_window)
-        mail_menu.display
+        mail_id = mail_menu.display
 
         content_window.refresh
+
+        mail_id
       end
 
-      # TODO
-      # def show_email_content
+      def show_email_content(email)
+        @log.debug(email)
         # y = 0
         # content_window.setpos(y, 0)
         # content.split(CONTENT_SPLIT_REGEX) do |line|
@@ -71,16 +73,14 @@ module Imbox
         #   y += 1
         #   content_window.setpos(y, 0)
         # end
-      # end
+      end
 
       def menu_up
         mail_menu.move_up
-        true
       end
 
       def menu_down
         mail_menu.move_down
-        true
       end
 
       private

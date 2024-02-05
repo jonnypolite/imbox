@@ -15,7 +15,7 @@ module Imbox
         @range_start = 0
         @range_end = max_menu_length
 
-        @logger = Logger.new('development.log')
+        @log = Logger.new('development.log')
       end
 
       def display
@@ -30,6 +30,8 @@ module Imbox
 
           y += 1
         end
+
+        selection
       end
 
       def move_up

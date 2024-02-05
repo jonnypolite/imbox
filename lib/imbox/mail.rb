@@ -28,6 +28,11 @@ module Imbox
       end
     end
 
+    def get_email(id)
+      mail_box[id]
+    end
+
+    # TODO: Do I want this here or in the mail summary class?
     def open(id)
       # check if it's multipart or not
         # This might be as simple as looking for Content-Type: multipart
@@ -40,6 +45,10 @@ module Imbox
     private
 
     attr_reader :mail_box
+
+    def is_multipart?(email)
+      logger.debug(email)
+    end
 
     def fix_date(email)
       date = email.header['received'].first.value.split(';').last.strip if email.date.nil?

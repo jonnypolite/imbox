@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.executables << 'imbox'
 
   spec.add_dependency 'curses', '~> 1.4.4'
-  spec.add_dependency 'mail', '~> 2.7.1'
+  spec.add_dependency 'mail', '~> 2.8.1'
   spec.add_dependency 'rmail', '~> 1.1.4'
   spec.add_dependency 'strings', '~> 0.2.1'
 

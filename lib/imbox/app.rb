@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'imbox/view/display'
-require 'imbox/mail'
+require 'imbox/mailbox'
 require 'logger'
 
 module Imbox
@@ -19,7 +19,7 @@ module Imbox
     end
 
     def initialize(mbox_path)
-      @mail = Mail.new(mbox_path)
+      @mailbox = Mailbox.new(mbox_path)
       @selected_email_id = nil
       @log = Logger.new('development.log')
 
@@ -28,11 +28,11 @@ module Imbox
 
     private
 
-    attr_reader :display, :mail
+    attr_reader :display, :mailbox
 
     def run
       @display = View::Display.new(title: 'Imbox')
-      summary = mail.summary_list
+      summary = mailbox.summary_list
       @selected_email_id = display.show_menu_content(summary)
 
       loop do
@@ -47,7 +47,7 @@ module Imbox
     end
 
     def open_email
-      display.show_email_content(mail.get_email(@selected_email_id))
+      display.show_email_content(mailbox.get_email(@selected_email_id))
     end
 
     def move_up

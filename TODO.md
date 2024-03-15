@@ -9,4 +9,5 @@
   - [x] Look for TODOs
   - [x] Specs
 - [ ] Open an email
+  - [x] Rename Mail class to Mailbox
 

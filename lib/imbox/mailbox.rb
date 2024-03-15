@@ -7,33 +7,33 @@ require 'imbox/mail_display'
 require 'logger'
 
 module Imbox
-  class Mail
+  class Mailbox
     def initialize(mbox_path)
       @logger = Logger.new('development.log')
-      @mail_box = []
+      @emails = []
       mbox = File.open(mbox_path)
 
       RMail::Mailbox.parse_mbox(mbox) do |raw_email|
         parsed_email = ::Mail.read_from_string(raw_email)
         parsed_email.date = fix_date(parsed_email)
-        @mail_box << parsed_email
+        @emails << parsed_email
       end
 
       mbox.close
     end
 
     def summary_list(start_range = nil, end_range = nil)
-      mail_box[start_range..end_range].map.with_index(start_range) do |email, index|
+      emails[start_range..end_range].map.with_index(start_range) do |email, index|
         MailSummary.new(index, email)
       end
     end
 
     def get_email(id)
-      mail_box[id]
+      MailDisplay.new(emails[id])
     end
 
-    # TODO: Do I want this here or in the mail summary class?
-    def open(id)
+    # TODO: Do I want this here or in the mail display class?
+    def parse(id)
       # check if it's multipart or not
         # This might be as simple as looking for Content-Type: multipart
       # need some way to find all the plain/text parts
@@ -44,9 +44,9 @@ module Imbox
 
     private
 
-    attr_reader :mail_box
+    attr_reader :emails
 
-    def is_multipart?(email)
+    def multipart?(email)
       logger.debug(email)
     end
 

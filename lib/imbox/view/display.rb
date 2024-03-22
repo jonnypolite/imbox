@@ -64,9 +64,12 @@ module Imbox
         mail_id
       end
 
-      def show_email_content(email_content)
-        @log.debug("\n\n\n")
-        @log.debug(email_content.to_s)
+      # This receives a MailDisplay
+      def show_email_content(email)
+        @log.debug(email.body)
+        # @log.debug("\n\n\n")
+        # @log.debug(email_content.to_s)
+
         # y = 0
         # content_window.setpos(y, 0)
         # content.split(CONTENT_SPLIT_REGEX) do |line|

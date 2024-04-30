@@ -12,8 +12,8 @@ module Imbox
       113 => 'exit_loop', # q
       10 => 'open_email', # return
       127 => 'exit_email', # backspace
-      112 => 'scroll_email_up', # p
-      108 => 'scroll_email_down', # l
+      # 112 => 'scroll_email_up', # p
+      # 108 => 'scroll_email_down', # l
       100 => 'debug', # d
       Curses::KEY_RESIZE => 'on_terminal_resize'
     }.freeze
@@ -52,16 +52,6 @@ module Imbox
 
     def debug
       display.debug
-      true
-    end
-
-    def scroll_email_up
-      display.scroll_email_up
-      true
-    end
-
-    def scroll_email_down
-      display.scroll_email_down
       true
     end
 

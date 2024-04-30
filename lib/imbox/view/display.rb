@@ -95,13 +95,13 @@ module Imbox
         @log.debug(content_window.cury)
       end
 
-      def scroll_email_up
-        content_window.scrl(1)
-      end
+      # def scroll_email_up
+      #   content_window.scrl(1)
+      # end
 
-      def scroll_email_down
-        content_window.scrl(-1)
-      end
+      # def scroll_email_down
+      #   content_window.scrl(-1)
+      # end
 
       private
 

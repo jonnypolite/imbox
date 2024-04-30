@@ -17,9 +17,15 @@ end
 
 desc 'Install the latest version imbox gem'
 task :install do
-  gem_file = Dir.glob('*.gem').last
+  versions = Dir.glob('*.gem').map do |gem_name|
+    gem_name.split('-').last[0...-4]
+  end
 
-  sh "gem install ./#{gem_file}"
+  latest_version = versions.sort_by { |v| Gem::Version.new(v) }.pop
+
+  gem_name = Dir.glob("*-#{latest_version}.*").pop
+
+  sh "gem install ./#{gem_name}"
 end
 
 desc 'Build and install imbox'

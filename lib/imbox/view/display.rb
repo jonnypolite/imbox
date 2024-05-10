@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'curses'
-require 'imbox/view/menu'
-require 'imbox/view/confirm'
+require 'imbox/view/components/menu'
+require 'imbox/view/components/confirm'
+require 'imbox/view/components/email_list'
 require 'logger'
 
 module Imbox
@@ -17,17 +18,18 @@ module Imbox
       # their own keyboard input bindings? I would rather define them with an associated class
       # then have everything in app.rb. I THINK the only way to do this is to have each subwindow
       # await input, will have to test.
-      def initialize(config = {})
-        @config = config
-
+      def initialize(mailbox)
         Curses.init_screen
         Curses.curs_set(0)
         Curses.noecho
 
+        # Initialize all the components of the view
         @main_window = Curses::Window.new(Curses.lines, Curses.cols, 0, 0)
-        redraw
+        @email_list = Components::EmailList.new(mailbox, main_window, **email_list_config)
 
-        main_window.refresh
+        draw
+
+        # refresh
 
         @log = Logger.new('development.log')
       end
@@ -46,18 +48,18 @@ module Imbox
         confirm_dialog.display(message)
       end
 
-      def redraw
-        reset_main_window
-        draw_title(main_window, config[:title]) if config[:title]
-        draw_header(main_window)
-        draw_content_window(main_window)
-        mail_menu&.update
-        mail_menu&.display
+      def draw
+        # reset_main_window
+        @email_list.draw
+        # email_display.draw
+
+        # mail_menu&.update
+        # mail_menu&.display
         true
       end
 
       def refresh
-        content_window.refresh
+        # content_window.refresh
         main_window.refresh
       end
 
@@ -105,52 +107,60 @@ module Imbox
 
       private
 
-      attr_reader :config, :confirm_dialog, :header_window, :main_window, :content_window, :mail_menu
+      attr_reader :confirm_dialog, :header_window, :main_window, :content_window, :mail_menu
 
-      def draw_header(window)
-        width = window.maxx - 2
-
-        if header_window.nil?
-          @header_window = window.subwin(HEADER_HEIGHT, width, 1, 1)
-        else
-          header_window.clear
-          header_window.resize(HEADER_HEIGHT, width)
-        end
-
-        bottom_border(header_window)
-        header_window.setpos(0, 0)
-        header_window.addstr('Header placeholder text.')
+      def email_list_config
+        {
+          height: 15,
+          width: Curses.cols,
+          top: 0,
+          left: 0
+        }
       end
 
-      def draw_content_window(window)
-        height = window.maxy - HEADER_HEIGHT - 2
-        width = window.maxx - 2
-        top = HEADER_HEIGHT + 1
-        left = 1
+      # def draw_header(window)
+      #   width = window.maxx - 2
 
-        if content_window.nil?
-          @content_window ||= window.subwin(height, width, top, left)
-        else
-          content_window.resize(height, width)
-        end
-      end
+      #   if header_window.nil?
+      #     @header_window = window.subwin(HEADER_HEIGHT, width, 1, 1)
+      #   else
+      #     header_window.clear
+      #     header_window.resize(HEADER_HEIGHT, width)
+      #   end
 
-      def draw_title(window, title_text)
-        window.setpos(0, 5)
-        window.addstr("[ #{title_text} ]")
-      end
+      #   bottom_border(header_window)
+      #   header_window.setpos(0, 0)
+      #   header_window.addstr('Header placeholder text.')
+      # end
 
-      def bottom_border(window)
-        window.setpos(window.maxy - 1, 0)
-        (0..window.maxx).each do
-          window.addstr('─')
-        end
-      end
+      # def draw_content_window(window)
+      #   height = window.maxy - HEADER_HEIGHT - 2
+      #   width = window.maxx - 2
+      #   top = HEADER_HEIGHT + 1
+      #   left = 1
+
+      #   if content_window.nil?
+      #     @content_window ||= window.subwin(height, width, top, left)
+      #   else
+      #     content_window.resize(height, width)
+      #   end
+      # end
+
+      # def draw_title(window, title_text)
+      #   window.setpos(0, 5)
+      #   window.addstr("[ #{title_text} ]")
+      # end
+
+      # def bottom_border(window)
+      #   window.setpos(window.maxy - 1, 0)
+      #   (0..window.maxx).each do
+      #     window.addstr('─')
+      #   end
+      # end
 
       def reset_main_window
         main_window.resize(Curses.lines, Curses.cols)
         main_window.clear
-        main_window.box
       end
 
       # def border(window)

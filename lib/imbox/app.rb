@@ -35,8 +35,8 @@ module Imbox
     attr_reader :display, :mailbox
 
     def run
-      @display = View::Display.new(title: 'Imbox')
-      list_emails
+      @display = View::Display.new(mailbox)
+      # list_emails
 
       loop do
         input = display.await_input
@@ -79,7 +79,7 @@ module Imbox
     end
 
     def on_terminal_resize
-      display.redraw
+      display.draw
     end
 
     def exit_loop

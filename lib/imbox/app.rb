@@ -40,7 +40,7 @@ module Imbox
 
       loop do
         input = display.await_input
-        @log.debug("Key Press: #{input.ord}")
+        @log.debug("Key Press: #{input} and ord: #{input.ord}")
         continue = send(INPUT_CONFIG[input.ord] || 'noop')
         break unless continue
 
@@ -84,7 +84,7 @@ module Imbox
 
     def exit_loop
       confirm = display.confirm("Are you sure you'd like to quit?")
-      display.redraw
+      display.draw
 
       # Confirm returns true on OK, false on CANCEL
       # but false is the thing that will break the input loop

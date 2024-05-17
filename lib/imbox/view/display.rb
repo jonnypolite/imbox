@@ -44,7 +44,7 @@ module Imbox
       end
 
       def confirm(message = nil)
-        @confirm_dialog = Confirm.new(main_window)
+        @confirm_dialog = Components::Confirm.new(main_window)
         confirm_dialog.display(message)
       end
 

@@ -25,7 +25,7 @@ module Imbox
           content[range_start..range_end].each.with_index(range_start) do |option, index|
             window.setpos(y, 2)
             window.standout if selection == index
-            window.addstr(option.to_s)
+            window.addstr(truncate(option.to_s))
             window.standend
 
             y += 1
@@ -64,6 +64,16 @@ module Imbox
 
         def max_menu_length
           window.maxy - 1
+        end
+
+        # Despite the name, this will only truncate if necessary
+        def truncate(item_str)
+          if item_str.length > (window.maxx - 3)
+            clip = window.maxx - 10
+            "#{item_str[0..clip]}..."
+          else
+            item_str
+          end
         end
       end
     end

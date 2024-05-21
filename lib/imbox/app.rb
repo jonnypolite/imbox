@@ -7,14 +7,7 @@ require 'logger'
 module Imbox
   class App
     INPUT_CONFIG = {
-      106 => 'move_down', # j
-      107 => 'move_up',   # k
-      113 => 'exit_loop', # q
-      10 => 'open_email', # return
-      127 => 'exit_email', # backspace
-      # 112 => 'scroll_email_up', # p
-      # 108 => 'scroll_email_down', # l
-      100 => 'debug', # d
+      113 => 'exit', # q
       Curses::KEY_RESIZE => 'on_terminal_resize'
     }.freeze
 
@@ -36,29 +29,22 @@ module Imbox
 
     def run
       @display = View::Display.new(mailbox)
-      # list_emails
 
       loop do
         input = display.await_input
-        @log.debug("Key Press: #{input} and ord: #{input.ord}")
-        continue = send(INPUT_CONFIG[input.ord] || 'noop')
+        continue = send(INPUT_CONFIG[input] || 'noop')
         break unless continue
 
         display.refresh
       end
     ensure
-      quit
+      display.close
     end
 
-    def debug
-      display.debug
-      true
-    end
-
-    def list_emails
-      summary = mailbox.summary_list
-      @selected_email_id = display.show_menu_content(summary)
-    end
+    # def list_emails
+    #   summary = mailbox.summary_list
+    #   @selected_email_id = display.show_menu_content(summary)
+    # end
 
     def open_email
       display.show_email_content(mailbox.get_email(@selected_email_id))
@@ -82,17 +68,13 @@ module Imbox
       display.draw
     end
 
-    def exit_loop
+    def exit
       confirm = display.confirm("Are you sure you'd like to quit?")
       display.draw
 
       # Confirm returns true on OK, false on CANCEL
       # but false is the thing that will break the input loop
       !confirm
-    end
-
-    def quit
-      display.close
     end
 
     def noop

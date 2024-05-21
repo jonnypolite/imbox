@@ -8,10 +8,11 @@ module Imbox
       # Content must be an array of objects that support
       # .id and .to_s
       class Menu
-        def initialize(content, window, selection = 0)
+        def initialize(content, window, boxed: false)
           @content = content
           @window = window
-          @selection = selection
+          @boxed = boxed
+          @selection = 0
           @range_start = 0
           @range_end = max_menu_length
 
@@ -19,7 +20,7 @@ module Imbox
         end
 
         def display
-          y = 0
+          y = @boxed ? 1 : 0
           window.clear
 
           content[range_start..range_end].each.with_index(range_start) do |option, index|
@@ -63,7 +64,7 @@ module Imbox
         attr_reader :content, :range_start, :range_end, :selection, :window
 
         def max_menu_length
-          window.maxy - 1
+          @boxed ? window.maxy - 3 : window.maxy - 1
         end
 
         # Despite the name, this will only truncate if necessary

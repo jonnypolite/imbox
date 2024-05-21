@@ -9,7 +9,15 @@ require 'logger'
 module Imbox
   module View
     class Display
-      HEADER_HEIGHT = 5
+      INPUT_CONFIG = {
+        106 => 'email_list_down', # j
+        107 => 'email_list_up',   # k
+        10 => 'open_email', # return
+        127 => 'exit_email', # backspace
+        # 112 => 'scroll_email_up', # p
+        # 108 => 'scroll_email_down', # l
+        100 => 'debug' # d
+      }.freeze
 
       # TODO: I think what I want Display to be is a wrapper/manager for a collection of Curses
       # windows. They would be placed next to each other in a cohesive way and registered here.
@@ -34,8 +42,17 @@ module Imbox
         @log = Logger.new('development.log')
       end
 
+      # Runs a method if we have a corresponding
+      # key in INPUT_CONFIG, sends the input back to
+      # app otherwise.
       def await_input
-        main_window.getch
+        input = main_window.getch.ord
+        @log.debug("Key Press ord: #{input}")
+        if INPUT_CONFIG.keys.include?(input)
+          send(INPUT_CONFIG[input])
+        else
+          input
+        end
       end
 
       def close
@@ -50,7 +67,7 @@ module Imbox
 
       def draw
         # reset_main_window
-        @email_list.draw
+        email_list.draw
         # email_display.draw
 
         # mail_menu&.update
@@ -59,19 +76,19 @@ module Imbox
       end
 
       def refresh
-        # content_window.refresh
         main_window.refresh
+        email_list.refresh
       end
 
       # This receives a list of MailSummary objects
-      def show_menu_content(content)
-        @mail_menu ||= Menu.new(content, content_window)
-        mail_id = mail_menu.display
+      # def show_menu_content(content)
+      #   @mail_menu ||= Menu.new(content, content_window)
+      #   mail_id = mail_menu.display
 
-        content_window.refresh
+      #   content_window.refresh
 
-        mail_id
-      end
+      #   mail_id
+      # end
 
       # This receives a MailDisplay
       def show_email_content(email)
@@ -85,12 +102,12 @@ module Imbox
         # content_window.scrollok(true)
       end
 
-      def menu_up
-        mail_menu.move_up
+      def email_list_up
+        email_list.move_up
       end
 
-      def menu_down
-        mail_menu.move_down
+      def email_list_down
+        email_list.move_down
       end
 
       def debug
@@ -107,7 +124,7 @@ module Imbox
 
       private
 
-      attr_reader :confirm_dialog, :header_window, :main_window, :content_window, :mail_menu
+      attr_reader :confirm_dialog, :main_window, :email_list
 
       def email_list_config
         {

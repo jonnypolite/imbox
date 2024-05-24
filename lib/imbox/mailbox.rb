@@ -9,14 +9,15 @@ require 'logger'
 module Imbox
   class Mailbox
     def initialize(mbox_path)
-      @logger = Logger.new('development.log')
+      @log = Logger.new('development.log')
       @emails = []
       mbox = File.open(mbox_path)
 
       RMail::Mailbox.parse_mbox(mbox) do |raw_email|
         parsed_email = ::Mail.read_from_string(raw_email)
         parsed_email.date = fix_date(parsed_email)
-        @emails << parsed_email
+        insert_at = emails.bsearch_index { |email| email.date > parsed_email.date } || emails.size
+        @emails.insert(insert_at, parsed_email)
       end
 
       mbox.close

@@ -3,7 +3,7 @@
 require 'rmail'
 require 'mail'
 require 'imbox/mail_summary'
-require 'imbox/mail_display'
+require 'imbox/mail_reader'
 require 'logger'
 
 module Imbox
@@ -30,7 +30,7 @@ module Imbox
     end
 
     def get_email(id)
-      MailDisplay.new(emails[id])
+      MailReader.new(emails[id])
     end
 
     private

@@ -41,27 +41,9 @@ module Imbox
       display.close
     end
 
-    # def list_emails
-    #   summary = mailbox.summary_list
-    #   @selected_email_id = display.show_menu_content(summary)
-    # end
-
     def open_email
       display.show_email_content(mailbox.get_email(@selected_email_id))
       true
-    end
-
-    def exit_email
-      list_emails
-      true
-    end
-
-    def move_up
-      @selected_email_id = display.menu_up
-    end
-
-    def move_down
-      @selected_email_id = display.menu_down
     end
 
     def on_terminal_resize

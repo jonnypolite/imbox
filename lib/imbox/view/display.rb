@@ -4,6 +4,7 @@ require 'curses'
 require 'imbox/view/components/menu'
 require 'imbox/view/components/confirm'
 require 'imbox/view/components/email_list'
+require 'imbox/view/components/email_display'
 require 'logger'
 
 module Imbox
@@ -12,8 +13,8 @@ module Imbox
       INPUT_CONFIG = {
         106 => 'email_list_down', # j
         107 => 'email_list_up',   # k
-        10 => 'open_email', # return
-        127 => 'exit_email', # backspace
+        # 10 => 'open_email', # return
+        # 127 => 'exit_email', # backspace
         # 112 => 'scroll_email_up', # p
         # 108 => 'scroll_email_down', # l
         100 => 'debug' # d
@@ -34,10 +35,12 @@ module Imbox
         # Initialize all the components of the view
         @main_window = Curses::Window.new(Curses.lines, Curses.cols, 0, 0)
         @email_list = Components::EmailList.new(mailbox, main_window, **email_list_config)
+        @email_display = Components::EmailDisplay.new(main_window, **email_display_config)
+
+        @selected_email_id = nil
+        @mailbox = mailbox
 
         draw
-
-        # refresh
 
         @log = Logger.new('development.log')
       end
@@ -67,11 +70,10 @@ module Imbox
 
       def draw
         # reset_main_window
-        email_list.draw
-        # email_display.draw
+        @selected_email_id = email_list.draw
+        email_display.update(mailbox.get_email(@selected_email_id))
+        email_display.draw
 
-        # mail_menu&.update
-        # mail_menu&.display
         true
       end
 
@@ -90,9 +92,10 @@ module Imbox
       #   mail_id
       # end
 
-      # This receives a MailDisplay
-      def show_email_content(email)
-        content_window.clear
+      def show_email_content(email_id)
+        # This returns a MailDisplay
+        # mailbox.get_email(@selected_email_id)
+        # content_window.clear
 
         # Scroll stuff?
         # content_window.setscrreg(0, 10)
@@ -103,11 +106,11 @@ module Imbox
       end
 
       def email_list_up
-        email_list.move_up
+        @selected_email_id = email_list.move_up
       end
 
       def email_list_down
-        email_list.move_down
+        @selected_email_id = email_list.move_down
       end
 
       def debug
@@ -124,7 +127,16 @@ module Imbox
 
       private
 
-      attr_reader :confirm_dialog, :main_window, :email_list
+      attr_reader :confirm_dialog, :email_display, :email_list, :mailbox, :main_window
+
+      def email_display_config
+        {
+          height: Curses.lines - email_list_config[:height],
+          width: Curses.cols,
+          top: email_list_config[:height],
+          left: 0
+        }
+      end
 
       def email_list_config
         {

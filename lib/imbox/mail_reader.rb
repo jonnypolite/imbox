@@ -5,7 +5,7 @@ require 'html_to_plain_text'
 require 'logger'
 
 module Imbox
-  class MailDisplay
+  class MailReader
     extend Forwardable
 
     # email is a Mail::Message

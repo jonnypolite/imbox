@@ -20,6 +20,7 @@ module Imbox
         end
 
         def draw
+          window.clear
           window.box
           if @email
             # draw_header
@@ -32,6 +33,10 @@ module Imbox
         # This takes a MailReader
         def update(email)
           @email = email
+        end
+
+        def refresh
+          window.refresh
         end
 
         private

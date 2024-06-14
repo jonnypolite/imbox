@@ -37,7 +37,6 @@ module Imbox
         @email_list = Components::EmailList.new(mailbox, main_window, **email_list_config)
         @email_display = Components::EmailDisplay.new(main_window, **email_display_config)
 
-        @selected_email_id = nil
         @mailbox = mailbox
 
         draw
@@ -69,9 +68,7 @@ module Imbox
       end
 
       def draw
-        # reset_main_window
-        @selected_email_id = email_list.draw
-        email_display.update(mailbox.get_email(@selected_email_id))
+        email_display.update(mailbox.get_email(email_list.draw))
         email_display.draw
 
         true
@@ -80,17 +77,9 @@ module Imbox
       def refresh
         main_window.refresh
         email_list.refresh
+        email_display.draw
+        email_display.refresh
       end
-
-      # This receives a list of MailSummary objects
-      # def show_menu_content(content)
-      #   @mail_menu ||= Menu.new(content, content_window)
-      #   mail_id = mail_menu.display
-
-      #   content_window.refresh
-
-      #   mail_id
-      # end
 
       def show_email_content(email_id)
         # This returns a MailDisplay
@@ -106,11 +95,11 @@ module Imbox
       end
 
       def email_list_up
-        @selected_email_id = email_list.move_up
+        email_display.update(mailbox.get_email(email_list.move_up))
       end
 
       def email_list_down
-        @selected_email_id = email_list.move_down
+        email_display.update(mailbox.get_email(email_list.move_down))
       end
 
       def debug

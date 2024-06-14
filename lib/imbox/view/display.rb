@@ -49,7 +49,7 @@ module Imbox
       # app otherwise.
       def await_input
         input = main_window.getch.ord
-        @log.debug("Key Press ord: #{input}")
+        # @log.debug("Key Press ord: #{input}")
         if INPUT_CONFIG.keys.include?(input)
           send(INPUT_CONFIG[input])
         else

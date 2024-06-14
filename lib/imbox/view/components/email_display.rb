@@ -23,10 +23,12 @@ module Imbox
           window.clear
           window.box
           if @email
-            # draw_header
+            # TODO draw_header info
             # draw_body
-            window.setpos(1, 2)
-            window.addstr(email.body)
+            email.body.split("\n").each_with_index do |line, i|
+              window.setpos(i + 1, 2)
+              window.addstr(line)
+            end
           end
         end
 

@@ -68,7 +68,7 @@ module Imbox
       end
 
       def draw
-        email_display.update(mailbox.get_email(email_list.draw))
+        email_display.update_email(mailbox.get_email(email_list.draw))
         email_display.draw
 
         true
@@ -95,11 +95,11 @@ module Imbox
       end
 
       def email_list_up
-        email_display.update(mailbox.get_email(email_list.move_up))
+        email_display.update_email(mailbox.get_email(email_list.move_up))
       end
 
       def email_list_down
-        email_display.update(mailbox.get_email(email_list.move_down))
+        email_display.update_email(mailbox.get_email(email_list.move_down))
       end
 
       def debug

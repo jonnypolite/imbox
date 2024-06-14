@@ -15,8 +15,8 @@ module Imbox
         107 => 'email_list_up',   # k
         # 10 => 'open_email', # return
         # 127 => 'exit_email', # backspace
-        # 112 => 'scroll_email_up', # p
-        # 108 => 'scroll_email_down', # l
+        112 => 'scroll_email_up', # p
+        108 => 'scroll_email_down', # l
         100 => 'debug' # d
       }.freeze
 
@@ -68,7 +68,7 @@ module Imbox
       end
 
       def draw
-        email_display.update(mailbox.get_email(email_list.draw))
+        email_display.update_email(mailbox.get_email(email_list.draw))
         email_display.draw
 
         true
@@ -95,24 +95,24 @@ module Imbox
       end
 
       def email_list_up
-        email_display.update(mailbox.get_email(email_list.move_up))
+        email_display.update_email(mailbox.get_email(email_list.move_up))
       end
 
       def email_list_down
-        email_display.update(mailbox.get_email(email_list.move_down))
+        email_display.update_email(mailbox.get_email(email_list.move_down))
       end
 
       def debug
         @log.debug(content_window.cury)
       end
 
-      # def scroll_email_up
-      #   content_window.scrl(1)
-      # end
+      def scroll_email_up
+        email_display.scroll_up
+      end
 
-      # def scroll_email_down
-      #   content_window.scrl(-1)
-      # end
+      def scroll_email_down
+        email_display.scroll_down
+      end
 
       private
 

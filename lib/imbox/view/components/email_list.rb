@@ -7,7 +7,6 @@ module Imbox
   module View
     module Components
       # Display a selectable list of emails
-      # TODO: Make a parent class for common component stuff
       class EmailList
         def initialize(mailbox, parent_window, **window_config)
           @mailbox = mailbox

@@ -27,6 +27,7 @@ module Imbox
 
     attr_reader :display, :mailbox
 
+    # This is the main execution loop
     def run
       @display = View::Display.new(mailbox)
 
@@ -39,11 +40,6 @@ module Imbox
       end
     ensure
       display.close
-    end
-
-    def open_email
-      display.show_email_content(mailbox.get_email(@selected_email_id))
-      true
     end
 
     def on_terminal_resize

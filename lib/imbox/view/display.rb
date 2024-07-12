@@ -9,21 +9,19 @@ require 'logger'
 
 module Imbox
   module View
+    # This is like a main screen/page/display, on which all the other bits are rendered.
+    #  Encapsulates a main Curses::Window, as well as instantiating other abstractions that
+    #  handle things like listing emails by subject and displaying email bodies.
     class Display
       INPUT_CONFIG = {
         106 => 'email_list_down', # j
         107 => 'email_list_up',   # k
-        # 10 => 'open_email', # return
-        # 127 => 'exit_email', # backspace
         112 => 'scroll_email_up', # p
         108 => 'scroll_email_down', # l
         100 => 'debug' # d
       }.freeze
 
-      # TODO: I think what I want Display to be is a wrapper/manager for a collection of Curses
-      # windows. They would be placed next to each other in a cohesive way and registered here.
-      # They would be initialized and positioned here sort of like Vue components. I guess there would
-      # still have to be a main_window for them to sit on. Could there be a way for them to each manage
+      # TODO: Could there be a way for them to each manage
       # their own keyboard input bindings? I would rather define them with an associated class
       # then have everything in app.rb. I THINK the only way to do this is to have each subwindow
       # await input, will have to test.
@@ -46,7 +44,7 @@ module Imbox
 
       # Runs a method if we have a corresponding
       # key in INPUT_CONFIG, sends the input back to
-      # app otherwise.
+      # App otherwise.
       def await_input
         input = main_window.getch.ord
         # @log.debug("Key Press ord: #{input}")
@@ -77,21 +75,7 @@ module Imbox
       def refresh
         main_window.refresh
         email_list.refresh
-        email_display.draw
         email_display.refresh
-      end
-
-      def show_email_content(email_id)
-        # This returns a MailDisplay
-        # mailbox.get_email(@selected_email_id)
-        # content_window.clear
-
-        # Scroll stuff?
-        # content_window.setscrreg(0, 10)
-
-        content_window.setpos(0, 0)
-        content_window.addstr(email.body)
-        # content_window.scrollok(true)
       end
 
       def email_list_up
@@ -136,65 +120,11 @@ module Imbox
         }
       end
 
-      # def draw_header(window)
-      #   width = window.maxx - 2
-
-      #   if header_window.nil?
-      #     @header_window = window.subwin(HEADER_HEIGHT, width, 1, 1)
-      #   else
-      #     header_window.clear
-      #     header_window.resize(HEADER_HEIGHT, width)
-      #   end
-
-      #   bottom_border(header_window)
-      #   header_window.setpos(0, 0)
-      #   header_window.addstr('Header placeholder text.')
-      # end
-
-      # def draw_content_window(window)
-      #   height = window.maxy - HEADER_HEIGHT - 2
-      #   width = window.maxx - 2
-      #   top = HEADER_HEIGHT + 1
-      #   left = 1
-
-      #   if content_window.nil?
-      #     @content_window ||= window.subwin(height, width, top, left)
-      #   else
-      #     content_window.resize(height, width)
-      #   end
-      # end
-
-      # def draw_title(window, title_text)
-      #   window.setpos(0, 5)
-      #   window.addstr("[ #{title_text} ]")
-      # end
-
-      # def bottom_border(window)
-      #   window.setpos(window.maxy - 1, 0)
-      #   (0..window.maxx).each do
-      #     window.addstr('─')
-      #   end
-      # end
-
+      # TODO: Is this still needed? Maybe for resizing?
       def reset_main_window
         main_window.resize(Curses.lines, Curses.cols)
         main_window.clear
       end
-
-      # def border(window)
-      #   # Draw the top
-      #     Curses.addstr('╔') if i === 0
-      #     Curses.addstr('═') if i > 0 && i < width-1
-      #     Curses.addstr('╗') if i === width-1
-
-      #   # Draw the middle vertical lines
-      #     Curses.addstr('║')
-
-      #   # Draw the bottom
-      #     Curses.addstr('╚') if i === 0
-      #     Curses.addstr('═') if i > 0 && i < width-1
-      #     Curses.addstr('╝') if i === width-1
-      # end
     end
   end
 end

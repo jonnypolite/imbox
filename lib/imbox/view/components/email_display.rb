@@ -27,6 +27,7 @@ module Imbox
             # TODO draw_header info
             draw_body
           end
+          window.refresh
         end
 
         # This takes a MailReader
@@ -36,7 +37,7 @@ module Imbox
         end
 
         def scroll_up
-          return unless @body_range_start > 0
+          return unless @body_range_start.positive?
 
           @body_range_start -= 1
           @body_range_end -= 1
@@ -50,7 +51,7 @@ module Imbox
         end
 
         def refresh
-          window.refresh
+          draw
         end
 
         private

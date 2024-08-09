@@ -32,6 +32,7 @@ module Imbox
             y += 1
           end
 
+          draw_scrollbar
           selection
         end
 
@@ -62,6 +63,15 @@ module Imbox
         private
 
         attr_reader :content, :range_start, :range_end, :selection, :window
+
+        def draw_scrollbar
+          # ▐ This is the thick line that I want to represent the scrollbar
+
+          # Decide if we need a scrollbar. Is there more content than rows?
+          # Decide how big the scrollbar should be based on window size and content size
+          #   There should be a mimimum size
+          # Place the scrollbar based on how much content we've scrolled through
+        end
 
         def max_menu_length
           @boxed ? window.maxy - 3 : window.maxy - 1

@@ -23,7 +23,6 @@ module Imbox
 
         def draw
           email_id = mail_menu.display
-          window.box
 
           email_id
         end
@@ -37,7 +36,6 @@ module Imbox
         end
 
         def refresh
-          window.box
           window.refresh
         end
 

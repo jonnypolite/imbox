@@ -22,6 +22,7 @@ module Imbox
         def display
           y = @boxed ? 1 : 0
           window.clear
+          window.box if @boxed
 
           content[range_start..range_end].each.with_index(range_start) do |option, index|
             window.setpos(y, 2)
@@ -68,9 +69,29 @@ module Imbox
           # ▐ This is the thick line that I want to represent the scrollbar
 
           # Decide if we need a scrollbar. Is there more content than rows?
-          # Decide how big the scrollbar should be based on window size and content size
-          #   There should be a mimimum size
-          # Place the scrollbar based on how much content we've scrolled through
+          return unless content.length > window.maxy
+
+          scroll_y = scrollbar_top
+          (1..scrollbar_size).each do
+            window.setpos(scroll_y, window.maxx - 1)
+            window.addstr('▐')
+            scroll_y += 1
+          end
+        end
+
+        # Decide how big the scrollbar should be based on window size and content size
+        # mimimum size = 2, max = 75% of window rows
+        def scrollbar_size
+          viewable_percentage = window.maxy.to_f / content.length
+          (viewable_percentage * window.maxy).floor.clamp(2, window.maxy * 0.75)
+        end
+
+        def scrollbar_top
+          rows_unseen = (content.length - range_end) - 1
+          # get rows_unseen% of the total? Maybe that's a number that gets closer
+          # and closer to zero that we can add scrollbar size to?
+
+          1
         end
 
         def max_menu_length

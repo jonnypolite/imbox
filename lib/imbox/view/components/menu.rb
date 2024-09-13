@@ -88,8 +88,11 @@ module Imbox
 
         def scrollbar_top
           rows_unseen = (content.length - range_end) - 1
-          # get rows_unseen% of the total? Maybe that's a number that gets closer
-          # and closer to zero that we can add scrollbar size to?
+          space_left_to_move = (window.maxy - 1) - scrollbar_size
+
+          rows_unseen / space_left_to_move
+
+          @log.debug("rows_unseen: #{rows_unseen}, space_left: #{space_left_to_move}, step increment: #{rows_unseen / space_left_to_move}")
 
           1
         end

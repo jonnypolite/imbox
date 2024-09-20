@@ -1,4 +1,4 @@
-package main
+package fullscreen
 
 // A simple program that opens the alternate screen buffer then counts down
 // from 5 and then exits.

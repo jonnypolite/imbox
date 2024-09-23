@@ -1,4 +1,4 @@
-package composable
+package examples
 
 import (
 	"fmt"
@@ -114,9 +114,17 @@ func (m mainModel) View() string {
 	var s string
 	model := m.currentFocusedModel()
 	if m.state == timerView {
-		s += lipgloss.JoinHorizontal(lipgloss.Top, focusedModelStyle.Render(fmt.Sprintf("%4s", m.timer.View())), modelStyle.Render(m.spinner.View()))
+		s += lipgloss.JoinHorizontal(
+			lipgloss.Top,
+			focusedModelStyle.Render(fmt.Sprintf("%4s", m.timer.View())),
+			modelStyle.Render(m.spinner.View()),
+		)
 	} else {
-		s += lipgloss.JoinHorizontal(lipgloss.Top, modelStyle.Render(fmt.Sprintf("%4s", m.timer.View())), focusedModelStyle.Render(m.spinner.View()))
+		s += lipgloss.JoinHorizontal(
+			lipgloss.Top,
+			modelStyle.Render(fmt.Sprintf("%4s", m.timer.View())),
+			focusedModelStyle.Render(m.spinner.View()),
+		)
 	}
 	s += helpStyle.Render(fmt.Sprintf("\ntab: focus next • n: new %s • q: exit\n", model))
 	return s

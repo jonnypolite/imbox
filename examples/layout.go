@@ -1,4 +1,4 @@
-package layout
+package examples
 
 // This example demonstrates various Lip Gloss style and layout features.
 

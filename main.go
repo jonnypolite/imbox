@@ -15,50 +15,27 @@ var cli struct {
 	} `cmd:"" help:"Browse the contents of an .mbox file."`
 }
 
-type window uint
+type box uint
 
 const (
-	listWindow window = iota
-	readWindow
+	listBox box = iota
+	readBox
 )
 
-const numberOfWindows = 2
+const numberOfBoxes = 2
 
 var (
-	terminalWidth       int
-	terminalHeight      int
-	listWindowHeight    int = 10
-	selectedWindowStyle     = lipgloss.NewStyle().
-				BorderForeground(lipgloss.Color("#22df5e"))
+	terminalWidth  int
+	terminalHeight int
+	listBoxHeight  int = 10
 )
 
 type mainModel struct {
-	selectedWindow window
+	selectedBox box
 }
 
-func windowStyle(width int, selected bool) lipgloss.Style {
-	style := lipgloss.NewStyle().
-		Width(width - 2). // The -2 accounts for the width of the borders
-		BorderStyle(lipgloss.ThickBorder()).
-		BorderForeground(lipgloss.Color("#157e36"))
-
-	if selected {
-		return selectedWindowStyle.Inherit(style)
-	}
-
-	return style
-}
-
-func listWindowStyle(height int, width int, selected bool) lipgloss.Style {
-	return lipgloss.NewStyle().
-		Height(height).
-		Inherit(windowStyle(width, selected))
-}
-
-func emailWindowStyle(width int, selected bool) lipgloss.Style {
-	return lipgloss.NewStyle().
-		Height(terminalHeight - listWindowHeight - 4).
-		Inherit(windowStyle(width, selected))
+func emailBoxHeight() int {
+	return terminalHeight - listBoxHeight - 5
 }
 
 // Init is called just before the first render
@@ -78,7 +55,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "tab":
-			m.selectedWindow = (m.selectedWindow + 1) % numberOfWindows
+			m.selectedBox = (m.selectedBox + 1) % numberOfBoxes
 		}
 	}
 
@@ -90,8 +67,9 @@ func (m mainModel) View() string {
 
 	s += lipgloss.JoinVertical(
 		lipgloss.Top,
-		listWindowStyle(listWindowHeight, terminalWidth, m.selectedWindow == listWindow).Render(fmt.Sprintf("selectedWindow: %d", m.selectedWindow)),
-		emailWindowStyle(terminalWidth, m.selectedWindow == readWindow).Render(fmt.Sprintf("width: %d", terminalWidth)),
+		TitleBar("Imbox", terminalWidth),
+		BoxStyle(listBoxHeight, terminalWidth, m.selectedBox == listBox).Render("Here is more content lots of content IDK"),
+		BoxStyle(emailBoxHeight(), terminalWidth, m.selectedBox == readBox).Render(fmt.Sprintf("width: %d", terminalWidth)),
 	)
 
 	return s
@@ -101,7 +79,7 @@ func main() {
 	ctx := kong.Parse(&cli)
 	switch ctx.Command() {
 	case "open <path>":
-		p := tea.NewProgram(mainModel{selectedWindow: listWindow}, tea.WithAltScreen())
+		p := tea.NewProgram(mainModel{selectedBox: listBox}, tea.WithAltScreen())
 
 		if _, err := p.Run(); err != nil {
 			log.Fatal(err)

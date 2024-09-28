@@ -1,4 +1,4 @@
-package composable
+package examples
 
 import (
 	"fmt"

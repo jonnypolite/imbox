@@ -13,7 +13,7 @@ func BoxStyle(height int, width int, selected bool) lipgloss.Style {
 	return lipgloss.NewStyle().
 		BorderStyle(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color(borderColor)).
-		Padding(1).
+		Padding(0, 1).
 		Height(height).
 		Width(width - 2) // The -2 accounts for the width of the borders
 }

@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/mail"
 
 	"github.com/alecthomas/kong"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jonnypolite/imbox/mailbox"
 )
 
 var cli struct {
@@ -24,31 +26,20 @@ const (
 
 const numberOfBoxes = 2
 
-var (
-	terminalWidth  int
-	terminalHeight int
-	listBoxHeight  int = 10
-)
-
 type mainModel struct {
 	selectedBox box
-}
-
-func emailBoxHeight() int {
-	return terminalHeight - listBoxHeight - 5
+	emails      []mail.Message
 }
 
 // Init is called just before the first render
 func (m mainModel) Init() tea.Cmd {
-	// This will open up the .mbox file at some point
 	return nil
 }
 
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch message := msg.(type) {
 	case tea.WindowSizeMsg:
-		terminalWidth = message.Width
-		terminalHeight = message.Height
+		SetTerminalSize(message.Height, message.Width)
 
 	case tea.KeyMsg:
 		switch message.String() {
@@ -68,8 +59,14 @@ func (m mainModel) View() string {
 	s += lipgloss.JoinVertical(
 		lipgloss.Top,
 		TitleBar("Imbox", terminalWidth),
-		BoxStyle(listBoxHeight, terminalWidth, m.selectedBox == listBox).Render("Here is more content lots of content IDK"),
-		BoxStyle(emailBoxHeight(), terminalWidth, m.selectedBox == readBox).Render(fmt.Sprintf("width: %d", terminalWidth)),
+		ListBox(
+			fmt.Sprintf("subject: %s", m.emails[0].Header.Get("Subject")),
+			m.selectedBox == listBox,
+		),
+		ReadBox(
+			fmt.Sprintf("width: %d", terminalWidth),
+			m.selectedBox == readBox,
+		),
 	)
 
 	return s
@@ -79,7 +76,9 @@ func main() {
 	ctx := kong.Parse(&cli)
 	switch ctx.Command() {
 	case "open <path>":
-		p := tea.NewProgram(mainModel{selectedBox: listBox}, tea.WithAltScreen())
+		emails := mailbox.GetEmails(cli.Open.Path)
+
+		p := tea.NewProgram(mainModel{selectedBox: listBox, emails: emails}, tea.WithAltScreen())
 
 		if _, err := p.Run(); err != nil {
 			log.Fatal(err)

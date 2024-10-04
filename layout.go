@@ -2,7 +2,7 @@ package main
 
 import "github.com/charmbracelet/lipgloss"
 
-const listBoxHeight int = 10
+const ListBoxHeight int = 10
 
 var (
 	terminalHeight int
@@ -10,7 +10,7 @@ var (
 )
 
 func ListBox(content string, selected bool) string {
-	return BoxStyle(listBoxHeight, terminalWidth, selected).
+	return BoxStyle(ListBoxHeight, terminalWidth, selected).
 		Render(content)
 }
 
@@ -33,5 +33,5 @@ func TitleBar(titleText string, width int) string {
 }
 
 func readBoxHeight() int {
-	return terminalHeight - listBoxHeight - 5
+	return terminalHeight - ListBoxHeight - 5
 }

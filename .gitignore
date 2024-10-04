@@ -1,4 +1,5 @@
 *.gem
+*.mbox
 Gemfile.lock
 .DS_Store
 .ruby-version

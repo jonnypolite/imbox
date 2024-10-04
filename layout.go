@@ -2,10 +2,11 @@ package main
 
 import "github.com/charmbracelet/lipgloss"
 
+const listBoxHeight int = 10
+
 var (
 	terminalHeight int
 	terminalWidth  int
-	listBoxHeight  int = 10
 )
 
 func ListBox(content string, selected bool) string {

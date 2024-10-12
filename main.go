@@ -8,6 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jonnypolite/imbox/mailbox"
+	"github.com/jonnypolite/imbox/ui"
 )
 
 var cli struct {
@@ -26,9 +27,9 @@ const (
 const numberOfBoxes = 2
 
 type mainModel struct {
-	selectedBox    box
-	emails         []mailbox.Email
-	emailSummaries []mailbox.MailSummary
+	selectedBox box
+	emails      []mailbox.Email
+	summaryMenu ui.Menu[mailbox.MailSummary]
 }
 
 // Init is called just before the first render
@@ -60,7 +61,7 @@ func (m mainModel) View() string {
 		lipgloss.Top,
 		TitleBar("Imbox", terminalWidth),
 		ListBox(
-			fmt.Sprintf("%s", m.emailSummaries[0].Display()),
+			fmt.Sprintf("%s", m.summaryMenu.Display()),
 			m.selectedBox == listBox,
 		),
 		ReadBox(
@@ -77,11 +78,16 @@ func main() {
 	switch ctx.Command() {
 	case "open <path>":
 		emails := mailbox.GetEmails(cli.Open.Path)
+		summaryMenu := ui.Menu[mailbox.MailSummary]{
+			Items:      mailbox.GetSummaryList(emails),
+			RangeStart: 0,
+			Size:       3,
+		}
 
 		model := mainModel{
-			selectedBox:    listBox,
-			emails:         emails,
-			emailSummaries: mailbox.GetSummaryList(emails),
+			selectedBox: listBox,
+			emails:      emails,
+			summaryMenu: summaryMenu,
 		}
 
 		p := tea.NewProgram(model, tea.WithAltScreen())

@@ -27,6 +27,6 @@ func GetSummaryList(emails []Email) []MailSummary {
 	return summaries
 }
 
-func (ms *MailSummary) Display() string {
+func (ms MailSummary) ToString() string {
 	return fmt.Sprintf("[%s] %s: %s", ms.date.Format("01/02/2006"), ms.from, ms.subject)
 }

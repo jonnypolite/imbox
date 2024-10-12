@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/mail"
 
 	"github.com/alecthomas/kong"
 	tea "github.com/charmbracelet/bubbletea"
@@ -27,8 +26,9 @@ const (
 const numberOfBoxes = 2
 
 type mainModel struct {
-	selectedBox box
-	emails      []mail.Message
+	selectedBox    box
+	emails         []mailbox.Email
+	emailSummaries []mailbox.MailSummary
 }
 
 // Init is called just before the first render
@@ -60,7 +60,7 @@ func (m mainModel) View() string {
 		lipgloss.Top,
 		TitleBar("Imbox", terminalWidth),
 		ListBox(
-			fmt.Sprintf("subject: %s", m.emails[0].Header.Get("Subject")),
+			fmt.Sprintf("%s", m.emailSummaries[0].Display()),
 			m.selectedBox == listBox,
 		),
 		ReadBox(
@@ -78,7 +78,13 @@ func main() {
 	case "open <path>":
 		emails := mailbox.GetEmails(cli.Open.Path)
 
-		p := tea.NewProgram(mainModel{selectedBox: listBox, emails: emails}, tea.WithAltScreen())
+		model := mainModel{
+			selectedBox:    listBox,
+			emails:         emails,
+			emailSummaries: mailbox.GetSummaryList(emails),
+		}
+
+		p := tea.NewProgram(model, tea.WithAltScreen())
 
 		if _, err := p.Run(); err != nil {
 			log.Fatal(err)

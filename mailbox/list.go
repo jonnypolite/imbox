@@ -1,29 +1,32 @@
 package mailbox
 
 import (
-	"net/mail"
-	"slices"
+	"fmt"
 	"time"
 )
 
-type mailSummary struct {
+type MailSummary struct {
 	id      int
 	date    time.Time
 	subject string
+	from    string
 }
 
-func GetSummaryList(emails []mail.Message, rangeStart int, rangeEnd int) []mailSummary {
-	var summaries []mailSummary
+func GetSummaryList(emails []Email) []MailSummary {
+	var summaries []MailSummary
 
 	for i := 0; i < len(emails); i++ {
-		date, _ := emails[i].Header.Date()
-		subject := emails[i].Header.Get("subject")
-		summaries = append(summaries, mailSummary{i, date, subject})
+		summaries = append(summaries, MailSummary{
+			i,
+			emails[i].Date(),
+			emails[i].Subject(),
+			emails[i].From(),
+		})
 	}
 
-	slices.SortFunc(summaries, func(a, b mailSummary) int {
-		return a.date.Compare(b.date)
-	})
-
 	return summaries
+}
+
+func (ms *MailSummary) Display() string {
+	return fmt.Sprintf("[%s] %s: %s", ms.date.Format("01/02/2006"), ms.from, ms.subject)
 }

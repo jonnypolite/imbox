@@ -4,12 +4,13 @@ import (
 	"io"
 	"net/mail"
 	"os"
+	"slices"
 
 	mbox "github.com/emersion/go-mbox"
 )
 
-func GetEmails(path string) []mail.Message {
-	var emails []mail.Message
+func GetEmails(path string) []Email {
+	var emails []Email
 	inbox, err := os.Open(path)
 	check(err)
 
@@ -24,8 +25,12 @@ func GetEmails(path string) []mail.Message {
 		msg, err := mail.ReadMessage(rawMessage)
 		check(err)
 
-		emails = append(emails, *msg)
+		emails = append(emails, Email{*msg})
 	}
+
+	slices.SortFunc(emails, func(a, b Email) int {
+		return a.Date().Compare(b.Date())
+	})
 
 	return emails
 }

@@ -11,21 +11,22 @@ type Email struct {
 }
 
 func (eml Email) Date() time.Time {
-	received := eml.Header["Received"][len(eml.Header["Received"])-1]
-	receivedTime := strings.Split(strings.Split(received, "; ")[1], " (")[0]
+	dateString := getDateString((eml.Header))
 
 	// There is NO consistency in the date formats.
 	// These are the ones I've seen so far.
-	formats := [3]string{
+	formats := [5]string{
 		time.RFC1123Z,
+		time.RFC1123,
 		"Mon, 2 Jan 2006 15:04:05 -0700",
 		"02 Jan 2006 15:04:05 -0700",
+		"2 Jan 2006 15:04:05 -0700",
 	}
 	var err error
 	var parsedTime time.Time
 	// Keep trying parse formats until one hopefully works
 	for i := 0; i < len(formats); i++ {
-		parsedTime, err = time.Parse(formats[i], receivedTime)
+		parsedTime, err = time.Parse(formats[i], dateString)
 		if err == nil {
 			break
 		}
@@ -40,4 +41,14 @@ func (eml Email) From() string {
 
 func (eml Email) Subject() string {
 	return eml.Header.Get("Subject")
+}
+
+// Helper functions
+func getDateString(header mail.Header) string {
+	if received, ok := header["Received"]; ok {
+		firstReceived := received[len(received)-1]
+		return strings.Split(strings.Split(firstReceived, "; ")[1], " (")[0]
+	}
+
+	return strings.Split(header["Date"][0], " (")[0]
 }

@@ -1,6 +1,7 @@
 package mailbox
 
 import (
+	"fmt"
 	"net/mail"
 	"strings"
 	"time"
@@ -40,7 +41,16 @@ func (eml Email) From() string {
 }
 
 func (eml Email) Subject() string {
-	return eml.Header.Get("Subject")
+	var subject string
+
+	if eml.Header.Get("X-Gmail-Labels") == "Chat" {
+		name := strings.Split(eml.From(), " <")[0]
+		subject = fmt.Sprintf("Chat with %s", name)
+	} else {
+		subject = eml.Header.Get("Subject")
+	}
+
+	return subject
 }
 
 // Helper functions

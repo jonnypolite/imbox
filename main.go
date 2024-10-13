@@ -29,7 +29,7 @@ const numberOfBoxes = 2
 type mainModel struct {
 	selectedBox box
 	emails      []mailbox.Email
-	summaryMenu ui.Menu[mailbox.MailSummary]
+	summaryList ui.ScrollingList[mailbox.MailSummary]
 }
 
 // Init is called just before the first render
@@ -48,6 +48,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "tab":
 			m.selectedBox = (m.selectedBox + 1) % numberOfBoxes
+		case "j":
+			if m.selectedBox == listBox {
+				m.summaryList.Down()
+			}
+		case "k":
+			if m.selectedBox == listBox {
+				m.summaryList.Up()
+			}
 		}
 	}
 
@@ -61,7 +69,7 @@ func (m mainModel) View() string {
 		lipgloss.Top,
 		TitleBar("Imbox", terminalWidth),
 		ListBox(
-			fmt.Sprintf("%s", m.summaryMenu.Display()),
+			m.summaryList.Display(),
 			m.selectedBox == listBox,
 		),
 		ReadBox(
@@ -78,16 +86,17 @@ func main() {
 	switch ctx.Command() {
 	case "open <path>":
 		emails := mailbox.GetEmails(cli.Open.Path)
-		summaryMenu := ui.Menu[mailbox.MailSummary]{
-			Items:      mailbox.GetSummaryList(emails),
-			RangeStart: 0,
-			Size:       3,
+		summaryList := ui.ScrollingList[mailbox.MailSummary]{
+			Items:         mailbox.GetSummaryList(emails),
+			RangeStart:    0,
+			Size:          ListBoxHeight - 1,
+			SelectedIndex: 0,
 		}
 
 		model := mainModel{
 			selectedBox: listBox,
 			emails:      emails,
-			summaryMenu: summaryMenu,
+			summaryList: summaryList,
 		}
 
 		p := tea.NewProgram(model, tea.WithAltScreen())

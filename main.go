@@ -69,7 +69,7 @@ func (m mainModel) View() string {
 		lipgloss.Top,
 		TitleBar("Imbox", terminalWidth),
 		ListBox(
-			m.summaryList.Display(),
+			m.summaryList.Display(terminalWidth-2),
 			m.selectedBox == listBox,
 		),
 		ReadBox(
@@ -89,7 +89,7 @@ func main() {
 		summaryList := ui.ScrollingList[mailbox.MailSummary]{
 			Items:         mailbox.GetSummaryList(emails),
 			RangeStart:    0,
-			Size:          ListBoxHeight - 1,
+			BoxHeight:     ListBoxHeight - 1,
 			SelectedIndex: 0,
 		}
 

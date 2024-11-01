@@ -1,6 +1,9 @@
 package main
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+	"github.com/jonnypolite/imbox/style"
+)
 
 const ListBoxHeight int = 10
 
@@ -10,13 +13,12 @@ var (
 )
 
 func ListBox(content string, selected bool) string {
-	return BoxStyle(ListBoxHeight, terminalWidth, selected).
+	return style.BoxStyle(ListBoxHeight, terminalWidth, selected).
 		Render(content)
 }
 
-func ReadBox(content string, selected bool) string {
-	return BoxStyle(readBoxHeight(), terminalWidth, selected).
-		Render(content)
+func ReadBoxStyle(selected bool) lipgloss.Style {
+	return style.BoxStyle(readBoxHeight(), terminalWidth, selected)
 }
 
 func SetTerminalSize(height int, width int) {

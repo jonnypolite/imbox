@@ -25,7 +25,13 @@ func GetEmails(path string) []Email {
 		msg, err := mail.ReadMessage(rawMessage)
 		check(err)
 
-		emails = append(emails, Email{*msg})
+		body, err := io.ReadAll(msg.Body)
+		check(err)
+
+		emails = append(emails, Email{
+			Header: msg.Header,
+			Body:   string(body),
+		})
 	}
 
 	slices.SortFunc(emails, func(a, b Email) int {

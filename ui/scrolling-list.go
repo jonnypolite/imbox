@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jonnypolite/imbox/style"
 )
 
 type Stringable interface {
@@ -33,17 +34,21 @@ func (sl *ScrollingList[T]) Display(maxWidth int) string {
 		displayString := truncateIfNecessary(sl.Items[i].ToString(), maxWidth)
 		if i == sl.SelectedIndex {
 			text = lipgloss.NewStyle().
-				Background(lipgloss.Color("99")).
+				Background(lipgloss.Color(style.ListSelectedBG)).
+				Foreground(lipgloss.Color(style.ListSelectedFG)).
 				Render(displayString)
 		} else {
-			text = displayString
+			text = lipgloss.NewStyle().
+				Render(displayString)
 		}
 		itemStrings = append(itemStrings, text)
 	}
 	return strings.Join(itemStrings, "\n")
 }
 
-func (sl *ScrollingList[T]) Up() {
+// Select the previous item if possible. Return
+// its index.
+func (sl *ScrollingList[T]) Up() int {
 	if sl.SelectedIndex > 0 {
 		sl.SelectedIndex--
 	}
@@ -51,9 +56,13 @@ func (sl *ScrollingList[T]) Up() {
 	if sl.SelectedIndex < sl.RangeStart {
 		sl.RangeStart--
 	}
+
+	return sl.SelectedIndex
 }
 
-func (sl *ScrollingList[T]) Down() {
+// Select the next item if possible. Return
+// its index.
+func (sl *ScrollingList[T]) Down() int {
 	if sl.SelectedIndex < len(sl.Items)-1 {
 		sl.SelectedIndex++
 	}
@@ -61,6 +70,8 @@ func (sl *ScrollingList[T]) Down() {
 	if sl.SelectedIndex > sl.RangeStart+sl.BoxHeight {
 		sl.RangeStart++
 	}
+
+	return sl.SelectedIndex
 }
 
 func truncateIfNecessary(str string, maxWidth int) string {

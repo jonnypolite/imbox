@@ -8,7 +8,8 @@ import (
 )
 
 type Email struct {
-	mail.Message
+	Header mail.Header
+	Body   string
 }
 
 func (eml Email) Date() time.Time {

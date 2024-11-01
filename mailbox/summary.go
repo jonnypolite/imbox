@@ -12,7 +12,7 @@ type MailSummary struct {
 	from    string
 }
 
-func GetSummaryList(emails []Email) []MailSummary {
+func GetMailSummaries(emails []Email) []MailSummary {
 	var summaries []MailSummary
 
 	for i := 0; i < len(emails); i++ {

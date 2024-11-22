@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 (23-Mar-2025)
+- Rewrote everything using Go
+- New visual style but same basic functionality
+- Display a vertical scroll percentage at the bottom of the email view
+
 ## 0.10.0 (29-Apr-2024)
 - Restructure the UI code to be a collection of component like windows
 - Organize input handling for a particular window in the relevant class

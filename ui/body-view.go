@@ -1,8 +1,12 @@
 package ui
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/bubbles/viewport"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/jonnypolite/imbox/mailbox"
+	"github.com/jonnypolite/imbox/style"
 )
 
 type BodyView struct {
@@ -23,5 +27,19 @@ func (bv *BodyView) SetEmail(email mailbox.Email) {
 }
 
 func (bv *BodyView) View() string {
-	return bv.Viewport.View()
+	return lipgloss.JoinVertical(lipgloss.Top, bv.Viewport.View(), bv.footer())
+}
+
+func (bv BodyView) footer() string {
+	percentDisplay := bv.Viewport.ScrollPercent() * 100
+
+	footerStyle := lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(style.UnselectedBoxBorder)).
+		Align(lipgloss.Right).
+		Width(bv.Viewport.Width - 2)
+
+	percentage := fmt.Sprintf("%3.f%%", percentDisplay)
+
+	return footerStyle.Render(percentage)
 }

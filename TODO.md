@@ -1,10 +1,10 @@
 # TODO
 - Make a way to display a small window that can take input for a confirmation dialog
-  - [ ] Encapsulate a confirm window somehow
-  - [ ] Init with message
-  - [ ] Toggle input with tab, accept with enter
-  - [ ] Always returns a boolean input
-  - [ ] Bring back the quit confirm
+  - [x] Encapsulate a confirm window somehow
+  - [x] Init with message
+  - [x] Toggle input with tab, accept with enter
+  - [x] Always returns a boolean input
+  - [x] Bring back the quit confirm
 - Open an email
   - [x] Rename Mail class to Mailbox
   - [x] Display an email

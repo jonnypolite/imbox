@@ -9,12 +9,12 @@ import (
 	"github.com/jonnypolite/imbox/style"
 )
 
-type BodyView struct {
+type EmailView struct {
 	email    mailbox.Email
 	Viewport viewport.Model
 }
 
-func (bv *BodyView) SetEmail(email mailbox.Email) {
+func (bv *EmailView) SetEmail(email mailbox.Email) {
 	// Keep track of the email so we can skip all this
 	// if the incoming email is the same one.
 	// TODO: return if email == bv.Email (need some way to check equality)
@@ -26,11 +26,11 @@ func (bv *BodyView) SetEmail(email mailbox.Email) {
 	bv.Viewport.GotoTop()
 }
 
-func (bv *BodyView) View() string {
+func (bv *EmailView) View() string {
 	return lipgloss.JoinVertical(lipgloss.Top, bv.Viewport.View(), bv.footer())
 }
 
-func (bv BodyView) footer() string {
+func (bv EmailView) footer() string {
 	percentDisplay := bv.Viewport.ScrollPercent() * 100
 
 	footerStyle := lipgloss.NewStyle().

@@ -1,6 +1,9 @@
 package style
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+	"github.com/jonnypolite/imbox/config"
+)
 
 func BoxStyle(height int, width int, selected bool) lipgloss.Style {
 	var borderColor string
@@ -22,6 +25,10 @@ func BoxStyle(height int, width int, selected bool) lipgloss.Style {
 		Width(width - 2) // The -2 accounts for the width of the borders
 }
 
+func ReadBoxStyle(selected bool) lipgloss.Style {
+	return BoxStyle(readBoxHeight(), config.TerminalWidth, selected)
+}
+
 var ConfirmBoxStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.DoubleBorder()).
 	BorderForeground(lipgloss.Color(SelectedBoxBorder)).
@@ -39,3 +46,9 @@ var ActiveButtonStyle = ButtonStyle.
 	Foreground(lipgloss.Color(ButtonSelectedFG)).
 	Background(lipgloss.Color(ButtonSelectedBG)).
 	Underline(true)
+
+const ListBoxHeight int = 10
+
+func readBoxHeight() int {
+	return config.TerminalHeight - ListBoxHeight - 5
+}

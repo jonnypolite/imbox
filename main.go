@@ -33,7 +33,7 @@ type mainModel struct {
 	selectedBox   box
 	emails        []mailbox.Email
 	summaryList   ui.ScrollingList[mailbox.MailSummary]
-	bodyView      ui.BodyView
+	emailView     ui.EmailView
 	dialogVisible bool
 	dialog        ui.Confirm
 }
@@ -71,7 +71,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "tab":
 				m.selectedBox = (m.selectedBox + 1) % numberOfBoxes
 			default:
-				m.bodyView.Viewport, _ = m.bodyView.Viewport.Update(msg)
+				m.emailView.Viewport, _ = m.emailView.Viewport.Update(msg)
 			}
 		} else {
 			switch message.String() {
@@ -81,11 +81,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.selectedBox = (m.selectedBox + 1) % numberOfBoxes
 			case "j":
 				if m.selectedBox == listBox {
-					m.bodyView.SetEmail(m.emails[m.summaryList.Down()])
+					m.emailView.SetEmail(m.emails[m.summaryList.Down()])
 				}
 			case "k":
 				if m.selectedBox == listBox {
-					m.bodyView.SetEmail(m.emails[m.summaryList.Up()])
+					m.emailView.SetEmail(m.emails[m.summaryList.Up()])
 				}
 			}
 		}
@@ -97,10 +97,12 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View builds the complicated string that is the UI.
 func (m mainModel) View() string {
 	var s string
-	readBoxStyle := ReadBoxStyle(m.selectedBox == readBox)
+	readBoxStyle := style.ReadBoxStyle(m.selectedBox == readBox)
 
-	m.bodyView.Viewport.Height = readBoxStyle.GetHeight() - 2
-	m.bodyView.Viewport.Width = readBoxStyle.GetWidth() - 2
+	headerHeight := m.emailView.HeaderHeight()
+	footerHeight := m.emailView.FooterHeight()
+	m.emailView.Viewport.Height = readBoxStyle.GetHeight() - headerHeight - footerHeight
+	m.emailView.Viewport.Width = readBoxStyle.GetWidth() - 2
 
 	s += lipgloss.JoinVertical(
 		lipgloss.Top,
@@ -109,7 +111,7 @@ func (m mainModel) View() string {
 			m.summaryList.Display(config.TerminalWidth-2),
 			m.selectedBox == listBox,
 		),
-		readBoxStyle.Render(m.bodyView.View()),
+		readBoxStyle.Render(m.emailView.View()),
 	)
 
 	if m.dialogVisible {
@@ -132,19 +134,19 @@ func main() {
 		summaryList := ui.ScrollingList[mailbox.MailSummary]{
 			Items:         mailbox.GetMailSummaries(emails),
 			RangeStart:    0,
-			BoxHeight:     ListBoxHeight - 1,
+			BoxHeight:     style.ListBoxHeight - 1,
 			SelectedIndex: 0,
 		}
 		// Viewport width and height are just placeholder values.
 		// They will get reset before displaying.
-		bodyView := ui.BodyView{Viewport: viewport.New(5, 5)}
-		bodyView.SetEmail(emails[0])
+		emailView := ui.EmailView{Viewport: viewport.New(5, 5)}
+		emailView.SetEmail(emails[0])
 
 		model := mainModel{
 			selectedBox: listBox,
 			emails:      emails,
 			summaryList: summaryList,
-			bodyView:    bodyView,
+			emailView:   emailView,
 		}
 
 		p := tea.NewProgram(model, tea.WithAltScreen())

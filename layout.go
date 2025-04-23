@@ -6,15 +6,9 @@ import (
 	"github.com/jonnypolite/imbox/style"
 )
 
-const ListBoxHeight int = 10
-
 func ListBox(content string, selected bool) string {
-	return style.BoxStyle(ListBoxHeight, config.TerminalWidth, selected).
+	return style.BoxStyle(style.ListBoxHeight, config.TerminalWidth, selected).
 		Render(content)
-}
-
-func ReadBoxStyle(selected bool) lipgloss.Style {
-	return style.BoxStyle(readBoxHeight(), config.TerminalWidth, selected)
 }
 
 func SetTerminalSize(height int, width int) {
@@ -28,8 +22,4 @@ func TitleBar(titleText string, width int) string {
 		PaddingLeft(1).
 		Align(lipgloss.Left).
 		Render(titleText)
-}
-
-func readBoxHeight() int {
-	return config.TerminalHeight - ListBoxHeight - 5
 }

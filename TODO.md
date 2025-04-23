@@ -9,7 +9,7 @@
   - [x] Rename Mail class to Mailbox
   - [x] Display an email
   - [x] Need to be able to scroll up and down
-  - [ ] Put the percentage into the body view, similar to the viewport demo
+  - [x] Put the percentage into the body view, similar to the viewport demo
   - [ ] Show email info at the top of the body view
   - [ ] Can Bubble Tea display images? I feel like it can and it might be funny.
 - [x] Fix the email ordering
@@ -19,7 +19,9 @@
 - [x] Figure out how to package this up, similiar to the gem I used to have
 - [x] Choose colors, instead of the random ones in there now
 - [ ] put a key binding legend at the bottom, change based on which box has focus
-- [ ] Threading
+- Threading
+  - [ ] This can work by subject, maybe safest route
+  - [ ] This can work by utilizing the X-GM-THRID email header. This is probably super reliable but only works with Gmail.
 - [ ] Search
 - [ ] Sort change
 - [ ] Save attachments
